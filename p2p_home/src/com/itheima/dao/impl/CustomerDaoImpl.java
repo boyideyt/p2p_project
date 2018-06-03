@@ -21,9 +21,18 @@ public class CustomerDaoImpl implements CustomerDao {
     @Override
     public Customer findByNameOrEmail(String colName, String checkedValue) throws SQLException {
         QueryRunner queryRunner = new QueryRunner(JDBCUtils.getDataSource());
-        String sql = "select * from customer where "+colName+" = ?";
-        System.out.println(sql);
-        Customer customer = queryRunner.query(sql, new BeanHandler<Customer>(Customer.class), checkedValue);
+        String sql = "select * from customer where c_name = ? or email = ?" ;
+        System.out.println(getClass().getSimpleName()+"===="+sql);
+        Customer customer = queryRunner.query(sql, new BeanHandler<Customer>(Customer.class), colName,checkedValue);
+        return customer;
+    }
+
+    @Override
+    public Customer login(String c_nameOrEmail, String password) throws SQLException {
+        QueryRunner queryRunner = new QueryRunner(JDBCUtils.getDataSource());
+        String sql = "select * from customer where (c_name = ? or email = ?) and password = ?" ;
+        System.out.println(getClass().getSimpleName()+"===="+sql);
+        Customer customer = queryRunner.query(sql, new BeanHandler<Customer>(Customer.class), c_nameOrEmail,c_nameOrEmail,password);
         return customer;
     }
 }

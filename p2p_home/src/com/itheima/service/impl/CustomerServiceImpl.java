@@ -11,6 +11,13 @@ import com.itheima.utils.JDBCUtils;
 import java.sql.SQLException;
 
 public class CustomerServiceImpl implements CustomerService {
+
+    /**
+     * 注册用户及账户
+     * @param customer
+     * @return
+     * @throws SQLException
+     */
     @Override
     public String reg(Customer customer) throws SQLException {
         try {
@@ -44,10 +51,24 @@ public class CustomerServiceImpl implements CustomerService {
         return "创建失败";
     }
 
+    /**
+     * 检验注册时用户名或密码是否已存在,存在则返回存在的账户
+     * @param colName
+     * @param checkedValue
+     * @return
+     * @throws SQLException
+     */
     @Override
     public Customer findByNameOrEmail(String colName, String checkedValue) throws SQLException {
         CustomerDao customerDao = new CustomerDaoImpl();
         Customer customer = customerDao.findByNameOrEmail(colName,checkedValue);
+        return customer;
+    }
+
+    @Override
+    public Customer login(String c_nameOrEmail, String password) throws SQLException {
+        CustomerDao customerDao = new CustomerDaoImpl();
+        Customer customer = customerDao.login(c_nameOrEmail,password);
         return customer;
     }
 }

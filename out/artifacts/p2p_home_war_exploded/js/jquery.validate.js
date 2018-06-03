@@ -54,24 +54,25 @@
 
         function notUsed(obj, validate) {
             var f = true;
-            //获取当前输入框的内容
-            var v = $.trim(obj.val());
-            //获取当前输入框的id
-            var at = $.trim(obj.attr("name"));
-            $.ajax(
-                url = "/p2p_home/RegisterServlet?method=notUsed&colName="+at+"&checkedValue="+v,
-                // data="colName="+at+"&checkedValue="+v,
-                type = "post",
-                dataType = "json",
-                async = false,
-                success = function (data) {
-                    var c = eval(data);
-                    if (c != null) {
+            //获取当前输入框的内容,获取当前输入框的id
+            var data =obj.attr("name") +"="+ obj.val();
+            $.ajax({
+                //这里不能单独用data
+                url: "/p2p_home/RegisterServlet?method=notUsed&" + data,
+
+                type: "post",
+                dataType: "json",
+                async : false,
+                //这里的success不能用
+                success : function (mg) {
+                    var jsonResult = eval(mg);
+                    if (jsonResult.type == 0) {
                         f = false;
+                    } else {
+                        f = true;
                     }
-                    f = true;
                 }
-            )
+            });
             return f;
         }
 
