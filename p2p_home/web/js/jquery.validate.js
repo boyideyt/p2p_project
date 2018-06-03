@@ -58,6 +58,7 @@
             var v = $.trim(obj.val());
             //获取当前输入框的id
             var at = $.trim(obj.attr("name"));
+            $.post()
             $.ajax(
                 url = "/p2p_home/RegisterServlet?method=notUsed&colName="+at+"&checkedValue="+v,
                 // data="colName="+at+"&checkedValue="+v,
@@ -71,7 +72,7 @@
                     }
                     f = true;
                 }
-            )
+            );
             return f;
         }
 
