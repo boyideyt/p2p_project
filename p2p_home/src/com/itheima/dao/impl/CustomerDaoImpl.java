@@ -31,7 +31,7 @@ public class CustomerDaoImpl implements CustomerDao {
     public Customer login(String c_nameOrEmail, String password) throws SQLException {
         QueryRunner queryRunner = new QueryRunner(JDBCUtils.getDataSource());
         String sql = "select * from customer where (c_name = ? or email = ?) and password = ?" ;
-        System.out.println(getClass().getSimpleName()+"===="+sql);
+        System.out.println(getClass().getSimpleName()+"===="+sql+"----"+c_nameOrEmail+password);
         Customer customer = queryRunner.query(sql, new BeanHandler<Customer>(Customer.class), c_nameOrEmail,c_nameOrEmail,password);
         return customer;
     }

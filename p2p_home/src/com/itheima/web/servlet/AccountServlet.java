@@ -34,17 +34,28 @@ public class AccountServlet extends HttpServlet {
         }
     }
 
+    /**
+     * space.js调用的方法
+     * @param request
+     * @param response
+     * @throws SQLException
+     * @throws IOException
+     */
     private void showAccount(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
         JsonResult jsonResult = new JsonResult();
         //去除当前session域中的customer
         Customer customer = (Customer) request.getSession().getAttribute("customer");
+        System.out.println(getClass().getSimpleName()+"--session--"+customer);
         if (customer == null) {
             jsonResult.setType(0);
             return;
         }
+        jsonResult.setType(1);
         AccountService accountService = new AccountServiceImpl();
         Account account = accountService.findAccount(customer.getId());
-        String jsonString = JSONObject.toJSONString(account);
+        System.out.println(getClass().getSimpleName()+"--result--"+account);
+        jsonResult.setContent(account);
+        String jsonString = JSONObject.toJSONString(jsonResult);
         response.getWriter().write(jsonString);
     }
 }

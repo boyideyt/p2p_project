@@ -59,14 +59,13 @@
             $.ajax({
                 //这里不能单独用data
                 url: "/p2p_home/RegisterServlet?method=notUsed&" + data,
-
                 type: "post",
                 dataType: "json",
                 async : false,
                 //这里的success不能用
                 success : function (mg) {
                     var jsonResult = eval(mg);
-                    if (jsonResult.type == 0) {
+                    if (mg.type == 0) {
                         f = false;
                     } else {
                         f = true;

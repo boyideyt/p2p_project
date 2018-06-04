@@ -47,8 +47,9 @@ public class LoginServlet extends HttpServlet {
         String checkcode_session = (String) request.getSession().getAttribute("checkcode_session");
         String c_nameOrEmail = request.getParameter("c_name");
         String pw = request.getParameter("password");
-        //密码使用Md5Utils编码
+        //对密码使用Md5Utils编码
         String password = Md5Utils.md5(pw);
+        System.out.println(getClass().getSimpleName()+"-comein-"+c_nameOrEmail+password);
         JsonResult jsonResult = new JsonResult();
         if (StringUtils.isBlank(checkCode)) {
             //验证码为空
@@ -92,7 +93,7 @@ public class LoginServlet extends HttpServlet {
             } else {
                 jsonResult.setType(1);
                 jsonResult.setErrorMsg("登录成功");
-                System.out.println(getClass().getSimpleName() + "----" + customer);
+                System.out.println(getClass().getSimpleName() + "--success--" + customer);
                 //将账户存入当前域中
                 request.getSession().setAttribute("customer", customer);
 //                response.sendRedirect("/p2p_home/home.html");
