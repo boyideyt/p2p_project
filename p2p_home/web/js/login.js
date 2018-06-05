@@ -5,7 +5,7 @@ function changeImage(img) {
 
 //登录操作
 function loglogin() {
-    var url = "/p2p_home/LoginServlet?type=login";
+    var url = "/p2p_home/LoginServlet?method=login";
     var param = $("#loginform").serialize();
     $.post(url,param, function (data) {
         if (data.type == 1) {

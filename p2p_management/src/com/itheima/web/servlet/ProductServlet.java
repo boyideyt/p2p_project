@@ -7,7 +7,6 @@ import com.itheima.service.impl.ProductServiceImpl;
 import org.apache.commons.beanutils.BeanUtils;
 
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -16,36 +15,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 @WebServlet(name = "ProductServlet", urlPatterns = "/ProductServlet")
-public class ProductServlet extends HttpServlet {
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
-        doGet(request, response);
-    }
+public class ProductServlet extends BaseServlet {
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
-        String method = request.getParameter("method");
-        try {
-            switch (method) {
-                case "findAll":
-                    String allPro = findAll(request, response);
-                    response.getWriter().write(allPro);
-                    break;
-                case "editPro":
-                    editPro(request, response);
-                    break;
-                case "addPro":
-                    addPro(request, response);
-                    break;
-                case "delPro":
-                    delPro(request, response);
-                    break;
-                case "findPro":
-                    findPro(request, response);
-                    break;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     public static String findPro(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
@@ -105,15 +76,16 @@ public class ProductServlet extends HttpServlet {
      * @param response
      * @return
      */
-    private String findAll(HttpServletRequest request, HttpServletResponse response) {
+    private void findAll(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ProductService productService = new ProductServiceImpl();
         List<Product> list = null;
         try {
             list = productService.findAll();
+            System.out.println(list);
         } catch (SQLException e) {
             e.printStackTrace();
         }
         String jsonString = JSONObject.toJSONString(list);
-        return jsonString;
+        response.getWriter().write(jsonString);
     }
 }

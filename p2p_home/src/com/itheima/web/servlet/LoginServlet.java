@@ -6,42 +6,98 @@ import com.itheima.domain.JsonResult;
 import com.itheima.service.CustomerService;
 import com.itheima.service.impl.CustomerServiceImpl;
 import com.itheima.utils.Md5Utils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.mail.MessagingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 
 @WebServlet(name = "LoginServlet", urlPatterns = "/LoginServlet")
-public class LoginServlet extends HttpServlet {
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doGet(request, response);
-    }
+public class LoginServlet extends BaseServlet {
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        try {
-            String type = request.getParameter("type");
-            switch (type) {
-                case "login":
-                    login(request, response);
-                    break;
-                case "notNull":
-                    notNull(request, response);
-                    break;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    private void changeStatus(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+        String email = request.getParameter("email");
+        CustomerService customerService = new CustomerServiceImpl();
+        int row = customerService.changeStatus(email);
+        JsonResult jsonResult = new JsonResult();
+        if (row == 0) {
+            //返回错误信息,
+            jsonResult.setType(0);
+            jsonResult.setErrorMsg("您没登陆,请先登录!");
+
+        } else {
+            jsonResult.setType(1);
+            //更新域中存储的customer对象
+            Customer customer = customerService.findByNameOrEmail("", email);
+            request.getSession().setAttribute("customer",customer);
         }
+        String jsonString = JSONObject.toJSONString(jsonResult);
+        response.getWriter().write(jsonString);
     }
 
-    private void notNull(HttpServletRequest request, HttpServletResponse response) {
+    private static Customer getCustomer(HttpServletRequest request) {
+        Customer customer = (Customer) request.getSession().getAttribute("customer");
+        return customer;
     }
 
+    //确认访问用户当前是否登录
+    private void findCustomer(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        //首先取出session域中是否存在customer,验证是否登录
+        Customer customer = getCustomer(request);
+        JsonResult jsonResult = new JsonResult();
+        if (customer == null) {
+            //返回错误信息,
+            jsonResult.setType(0);
+            jsonResult.setErrorMsg("您没登陆,请先登录!");
+
+        } else {
+            jsonResult.setType(1);
+            jsonResult.setContent(customer);
+        }
+        String jsonString = JSONObject.toJSONString(jsonResult);
+        response.getWriter().write(jsonString);
+    }
+
+    /**
+     * 邮箱验证码发送及回传
+     *
+     * @param request
+     * @param response
+     * @throws IOException
+     * @throws MessagingException
+     */
+    private void sendEmail(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        JsonResult jsonResult = new JsonResult();
+
+        //String email = customer.getEmail();
+        //生成四位验证码
+        String numeric = RandomStringUtils.randomNumeric(6);
+        jsonResult.setType(1);
+        jsonResult.setContent(numeric);
+        String emailMsg = "您好,您的验证码为:" + numeric + ",请尽快完成验证操作.";
+        //发送邮箱
+        //MailUtils.sendMail(email,emailMsg);
+        System.out.println(getClass().getSimpleName() + emailMsg);
+        //回传
+        String jsonString = JSONObject.toJSONString(jsonResult);
+        response.getWriter().write(jsonString);
+    }
+
+    /**
+     * 用户登录操作
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     * @throws SQLException
+     */
     private void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
         String checkCode = request.getParameter("checkCode");
         String checkcode_session = (String) request.getSession().getAttribute("checkcode_session");
@@ -49,7 +105,7 @@ public class LoginServlet extends HttpServlet {
         String pw = request.getParameter("password");
         //对密码使用Md5Utils编码
         String password = Md5Utils.md5(pw);
-        System.out.println(getClass().getSimpleName()+"-comein-"+c_nameOrEmail+password);
+        System.out.println(getClass().getSimpleName() + "-comein-" + c_nameOrEmail + password);
         JsonResult jsonResult = new JsonResult();
         if (StringUtils.isBlank(checkCode)) {
             //验证码为空
@@ -94,13 +150,12 @@ public class LoginServlet extends HttpServlet {
                 jsonResult.setType(1);
                 jsonResult.setErrorMsg("登录成功");
                 System.out.println(getClass().getSimpleName() + "--success--" + customer);
-                //将账户存入当前域中
+                //将账户存入当前session域中
                 request.getSession().setAttribute("customer", customer);
 //                response.sendRedirect("/p2p_home/home.html");
             }
             String jsonString = JSONObject.toJSONString(jsonResult);
             response.getWriter().write(jsonString);
-            return;
         }
 
     }

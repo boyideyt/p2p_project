@@ -1,8 +1,8 @@
 $(function () {
 
     /**
-     * 商品跨域搜索返回后遍历分布
-     * 在我要购买设置onclick事件
+     * 1.商品跨域搜索返回后遍历分布
+     * 2.在我要购买设置onclick事件
      */
     $.post("/p2p_management/ProductServlet?method=findAll", function (data) {
         //返回所有商品的json对象
@@ -64,7 +64,9 @@ function setByMsg(pid) {
 }
 
 /**
- * 1.判断是否是100倍整数;2.清空结算信息栏,更新根据投资金额计算的预计收益金额3.使确认按钮增加带有触发交易
+ * 1.判断是否是100倍整数;
+ * 2.清空结算信息栏,更新根据投资金额计算的预计收益金额;
+ * 3.使确认按钮增加带有触发交易;
  * @param pid
  * @param interest
  */
@@ -90,22 +92,20 @@ function time(pid, interest) {
                 $("#buybuybuy").click(function () {
                     var flag = confirm("确定了?");
                     if (flag) {
+                        //新建buyMsg对象
                         var buyMsg = {};
                         buyMsg.pid = product.id;
                         buyMsg.money = nu;
                         //interest不用传
-
                         $.post("/p2p_home/Product_AccountServlet?method=buy", buyMsg, function (data) {
                             var json = eval(data);
                             if (data.type == 0) {
                                 //购买失败
                                 $("#jsonResultMsg").html(data.errorMsg);
                             }else{
-                                location.href="/p2p_home/moto.html";
+                                location.href="/p2p_home/space.html";
                             }
                         }, "json")
-                    } else {
-
                     }
                 })
             }, "json");

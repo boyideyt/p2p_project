@@ -7,7 +7,7 @@ $(function () {
  * 搜寻所有商品
  */
 function findAllProduct() {
-    var url = "/p2p_management/ProductServlet?method=findAll"
+    var url = "/p2p_management/ProductServlet?method=findAll";
     $.post(url, function (data) {
         var list = eval(data);
         $(list).each(function (i) {

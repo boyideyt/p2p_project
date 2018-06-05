@@ -12,7 +12,7 @@ public class UserServiceImpl implements UserService {
     public User login(String username, String password) throws NoSuchMethodException, SQLException {
         UserDao userDao = new UserDaoImpl();
         User user = userDao.findUser(username,password);
-        System.out.println(getClass().getSimpleName()+user);
+//        System.out.println(getClass().getSimpleName()+user);
         return user;
     }
 }

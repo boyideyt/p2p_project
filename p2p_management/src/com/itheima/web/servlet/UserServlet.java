@@ -4,31 +4,17 @@ import com.itheima.domain.User;
 import com.itheima.service.UserService;
 import com.itheima.service.impl.UserServiceImpl;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebServlet(name = "UserServlet", urlPatterns = "/UserServlet")
-public class UserServlet extends HttpServlet {
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doGet(request, response);
-    }
+public class UserServlet extends BaseServlet {
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
-        String type = request.getParameter("type");
-        switch (type) {
-            case "login":
-                getUser(request, response);
-                break;
-            case "logout":
-                logoutMethod(request, response);
-                break;
-        }
 
-    }
-
-    private void logoutMethod(HttpServletRequest request, HttpServletResponse response) {
+    private void logout(HttpServletRequest request, HttpServletResponse response) {
         try {
             request.getSession().removeAttribute("username");
             request.getSession().removeAttribute("password");
@@ -38,10 +24,10 @@ public class UserServlet extends HttpServlet {
         }
     }
 
-    private void getUser(HttpServletRequest request, HttpServletResponse response) {
+    private void login(HttpServletRequest request, HttpServletResponse response) {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        System.out.println(getClass().getSimpleName() + username +"---"+ password);
+//        System.out.println(getClass().getSimpleName() + username +"---"+ password);
         UserService userService = new UserServiceImpl();
         try {
             if (username == null || "".equals(username.trim())) {
@@ -55,7 +41,7 @@ public class UserServlet extends HttpServlet {
             }
             //如果不为空,调用userService的login方法
             User user = userService.login(username, password);
-            System.out.println(getClass().getSimpleName() + user);
+//            System.out.println(getClass().getSimpleName() + user);
             if (user != null) {
                 HttpSession session = request.getSession();
                 session.setAttribute("username", username);

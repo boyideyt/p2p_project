@@ -53,15 +53,13 @@ public class CustomerServiceImpl implements CustomerService {
 
     /**
      * 检验注册时用户名或密码是否已存在,存在则返回存在的账户
-     * @param colName
-     * @param checkedValue
      * @return
      * @throws SQLException
      */
     @Override
-    public Customer findByNameOrEmail(String colName, String checkedValue) throws SQLException {
+    public Customer findByNameOrEmail(String c_name, String email) throws SQLException {
         CustomerDao customerDao = new CustomerDaoImpl();
-        Customer customer = customerDao.findByNameOrEmail(colName,checkedValue);
+        Customer customer = customerDao.findByNameOrEmail(c_name,email);
         return customer;
     }
 
@@ -70,5 +68,12 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerDao customerDao = new CustomerDaoImpl();
         Customer customer = customerDao.login(c_nameOrEmail,password);
         return customer;
+    }
+
+    @Override
+    public int changeStatus(String email) throws SQLException {
+        CustomerDao customerDao = new CustomerDaoImpl();
+        int row = customerDao.changeStatus(email);
+        return row;
     }
 }

@@ -15,7 +15,7 @@ public class UserDaoImpl implements UserDao {
         System.out.println(getClass().getClass());
         String sql = "select * from user where username=? and password=?";
         User user = queryRunner.query(sql, new BeanHandler<User>(User.class), username, password);
-        System.out.println(getClass().getSimpleName()+user);
+//        System.out.println(getClass().getSimpleName()+user);
         return user;
     }
 }

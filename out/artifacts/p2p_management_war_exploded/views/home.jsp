@@ -29,7 +29,7 @@
             <div class="item">
                 <a href="javascript:;"><i class="user icon"></i></a>
                 <span>${username}</span>
-                <a href="${pageContext.request.contextPath}/UserServlet?type=logout"><i class="power icon"></i></a>
+                <a href="${pageContext.request.contextPath}/UserServlet?method=logout"><i class="power icon"></i></a>
             </div>
         </div>
     </div>
@@ -300,7 +300,7 @@
             第八个
         </div>
     </div>
-    <!-- 弹出层 -->
+    <!-- 商品增删的弹出层 -->
     <div class="ui modal">
         <i class="close icon"></i>
         <div class="header" id="uiHeader"></div>

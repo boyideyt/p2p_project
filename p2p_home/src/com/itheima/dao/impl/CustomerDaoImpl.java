@@ -19,11 +19,11 @@ public class CustomerDaoImpl implements CustomerDao {
     }
 
     @Override
-    public Customer findByNameOrEmail(String colName, String checkedValue) throws SQLException {
+    public Customer findByNameOrEmail(String c_name, String email) throws SQLException {
         QueryRunner queryRunner = new QueryRunner(JDBCUtils.getDataSource());
         String sql = "select * from customer where c_name = ? or email = ?" ;
         System.out.println(getClass().getSimpleName()+"===="+sql);
-        Customer customer = queryRunner.query(sql, new BeanHandler<Customer>(Customer.class), colName,checkedValue);
+        Customer customer = queryRunner.query(sql, new BeanHandler<Customer>(Customer.class), c_name,email);
         return customer;
     }
 
@@ -34,5 +34,12 @@ public class CustomerDaoImpl implements CustomerDao {
         System.out.println(getClass().getSimpleName()+"===="+sql+"----"+c_nameOrEmail+password);
         Customer customer = queryRunner.query(sql, new BeanHandler<Customer>(Customer.class), c_nameOrEmail,c_nameOrEmail,password);
         return customer;
+    }
+
+    @Override
+    public int changeStatus(String email) throws SQLException {
+        QueryRunner queryRunner = new QueryRunner(JDBCUtils.getDataSource());
+        int update = queryRunner.update("UPDATE customer SET email_status=1 WHERE email = ?", email);
+        return update;
     }
 }

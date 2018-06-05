@@ -70,7 +70,7 @@
     <div class="column">
         <span id="lmsg">${lmsg}</span>
         <form id="login" class="ui fluid form segment"
-              action="${pageContext.request.contextPath}/UserServlet?type=login" method="POST" style="border-radius:6px;box-shadow: 6px 6px 3px #181423;">
+              action="${pageContext.request.contextPath}/UserServlet?method=login" method="POST" style="border-radius:6px;box-shadow: 6px 6px 3px #181423;">
             <div class="inline field"></div>
             <div class="field">
                 <label class="">用户名</label>

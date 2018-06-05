@@ -9,7 +9,6 @@ import com.itheima.utils.Md5Utils;
 import org.apache.commons.beanutils.BeanUtils;
 
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -18,30 +17,12 @@ import java.sql.SQLException;
 import java.util.Map;
 
 @WebServlet(name = "RegisterServlet", urlPatterns = "/RegisterServlet")
-public class RegisterServlet extends HttpServlet {
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
-        doGet(request, response);
-    }
+public class RegisterServlet extends BaseServlet {
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
-        String method = request.getParameter("method");
-        try {
-            switch (method) {
-                case "reg":
-                    reg(request, response);
-                    break;
-                case "notUsed":
-                    notUsed(request, response);
-                    break;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
 
     /**
      * 如果返回是null说明该用户名或密码没有占用
+     *
      * @param request
      * @param response
      * @throws IOException
@@ -51,20 +32,30 @@ public class RegisterServlet extends HttpServlet {
         String colName = request.getParameter("c_name");
         String checkedValue = request.getParameter("email");
         CustomerService customerService = new CustomerServiceImpl();
-        Customer customer = customerService.findByNameOrEmail(colName,checkedValue);
+        Customer customer = customerService.findByNameOrEmail(colName, checkedValue);
         JsonResult jsonResult = new JsonResult();
-        if(customer==null){
+        if (customer == null) {
             //没有占用
             jsonResult.setType(1);
-        }else{
+        } else {
             //已被占用
             jsonResult.setType(0);
         }
         String jsonString = JSONObject.toJSONString(jsonResult);
-        System.out.println(getClass().getSimpleName()+"~~"+jsonString+customer);
+        System.out.println(getClass().getSimpleName() + "~~" + jsonString + customer);
         response.getWriter().write(jsonString);
     }
 
+    /**
+     * 对输入里表信息进行注册操作
+     *
+     * @param request
+     * @param response
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     * @throws SQLException
+     * @throws IOException
+     */
     private void reg(HttpServletRequest request, HttpServletResponse response) throws InvocationTargetException, IllegalAccessException, SQLException, IOException {
         Map<String, String[]> map = request.getParameterMap();
         Customer customer = new Customer();
@@ -73,7 +64,7 @@ public class RegisterServlet extends HttpServlet {
         String password = customer.getPassword();
         String md5 = Md5Utils.md5(password);
         customer.setPassword(md5);
-        System.out.println(getClass().getSimpleName()+"-----"+customer);
+        System.out.println(getClass().getSimpleName() + "-----" + customer);
         CustomerService customerService = new CustomerServiceImpl();
         String regmsg = customerService.reg(customer);
         response.getWriter().write(regmsg);
