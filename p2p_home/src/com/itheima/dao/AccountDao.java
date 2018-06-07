@@ -10,4 +10,6 @@ public interface AccountDao {
     Account findAccount(int id) throws SQLException;
 
     int buy(Double newBalance, int id) throws SQLException;
+
+    int updateInterest(int c_id, Long interest) throws SQLException;
 }

@@ -10,6 +10,15 @@ public class Product_Account {
     private int p_id;
     private double money;
     private double interest;
+    private int flag;
+
+    public int getFlag() {
+        return flag;
+    }
+
+    public void setFlag(int flag) {
+        this.flag = flag;
+    }
 
     public int getId() {
         return id;

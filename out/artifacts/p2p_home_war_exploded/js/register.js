@@ -16,7 +16,7 @@ function register(){
             }else{
                 alert(jsonResult.errorMsg);//失败，显示错误信息
             }
-        }, "json");
+        },"json");
     }else{
         alert('请勾选"我同意《服务协议》"');
     }

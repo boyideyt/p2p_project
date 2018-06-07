@@ -16,11 +16,14 @@ import com.itheima.utils.JDBCUtils;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class P_AServiceImpl implements P_AService {
 
     /**
-     * 开启事务
+     * 开启购买事务
      * 1.创建P_A记录
      * 2.Account账户金额变化
      */
@@ -42,10 +45,12 @@ public class P_AServiceImpl implements P_AService {
             ProductDao productDao = new ProductDaoImpl();
             Product pro = productDao.findPro(pid);
             //3.2获取商品期限
-            BigDecimal proLimit = BigDecimal.valueOf(pro.getProLimit());
+//            BigDecimal proLimit = BigDecimal.valueOf(pro.getProLimit());
+            BigDecimal proLimit = new BigDecimal(pro.getProLimit());
             //3.3获取商品利率
-            BigDecimal annualized = BigDecimal.valueOf(pro.getAnnualized()/1200);
-            Double interest = cost.multiply(annualized).multiply(proLimit).doubleValue();
+//            BigDecimal annualized = BigDecimal.valueOf(pro.getAnnualized());
+            BigDecimal annualized = new BigDecimal(pro.getAnnualized());
+            Double interest = cost.multiply(annualized).multiply(proLimit).divide(new BigDecimal(1200),3,BigDecimal.ROUND_HALF_UP).doubleValue();
             //4.创建Product_Account对象
             Product_Account product_account = new Product_Account();
             product_account.setPa_num("hm"+new Date().getTime());
@@ -68,5 +73,40 @@ public class P_AServiceImpl implements P_AService {
             JDBCUtils.close();
         }
         return result;
+    }
+
+    /**
+     * 统计用户购买记录条数封装到map
+     * 再将每条购买记录封装结果封装到map
+     * @param id
+     * @return
+     */
+    @Override
+    public Map<String, Object> showAll(int id) throws SQLException {
+        try{
+            JDBCUtils.startTransaction();
+            HashMap<String, Object> hashMap = new HashMap<>();
+            P_ADao p_aDao = new P_ADaoImpl();
+            //添加数量
+            int count = Math.toIntExact(p_aDao.count(id));
+            hashMap.put("amount",count);
+            //添加结果map的集合
+            List<Map<String, Object>> mapList = p_aDao.showAll(id);
+            System.out.println(mapList);
+            hashMap.put("mapList",mapList);
+            //添加账户对象
+            AccountDao accountDao = new AccountDaoImpl();
+            Account account = accountDao.findAccount(id);
+            hashMap.put("account",account);
+
+            return hashMap;
+        }catch (Exception e){
+            e.printStackTrace();
+            JDBCUtils.rollback();
+        }finally {
+            JDBCUtils.commit();
+            JDBCUtils.close();
+        }
+        return null;
     }
 }

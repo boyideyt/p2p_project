@@ -29,13 +29,46 @@ $(function () {
     $.post("/p2p_home/LoginServlet?method=findCustomer", function (data) {
         if (data.type == 1) {
             var status = data.content.email_status;
-            if(status>0){
-                $("#emailSign").attr("class","glyphicon glyphicon-ok-circle");
+            var safeLevel = 0;
+            if (status > 0) {
+                $("#emailSign").attr("class", "glyphicon glyphicon-ok-circle");
                 $("#emailWord").html("已验证");
-                $("#emailWord").attr("class","yes");
-                $("#emailBtn").attr("onclick","");
-
+                $("#emailWord").attr("class", "yes");
+                $("#emailBtn").attr("onclick", "");
+                safeLevel++;
             }
+            if (safeLevel == 1) {
+                $("#safeLevel").html("中");
+            }
+        }
+    }, "json");
+
+
+    //初始化投资记录列表
+    $.post("/p2p_home/Product_AccountServlet?method=showAll", function (data) {
+        if (data.type == 0) {
+        } else {
+            //提取记录总条数{"content":{"mapList":[{"proNum":"hm002","money":5000,"interest":245.00000000000003,"paDate":1528214400000,"STATU":0,"pa_num":"hm1528271865128","proLimit":12,"proName":"黑马月月摇"}],"amount":1},"type":1}
+            var amount = data.content.amount;
+            var records = data.content.mapList;
+            var account = data.content.account;
+            var tr = "";
+            for (var i = 0; i < records.length; i++) {
+                tr += "<tr>" +
+                    "<td>"+records[i].pa_num+"</td>" +
+                    "<td>"+records[i].proName+"</td>" +
+                    "<td>"+records[i].proNum+"</td>" +
+                    "<td>"+records[i].money+"</td>" +
+                    "<td>"+records[i].proLimit+"</td>" +
+                    "<td>"+records[i].interest+"</td>" +
+                    "<td>"+new Date(records[i].paDate).toLocaleDateString()+"</td>" +
+                    "<td>"+(records[i].STATU==1?"已到期":"待结算")+"</td>" +
+                    "</tr>";
+            }
+            $("#tbody").append($(tr));
+            $("#tbody").append($("<tr><td colspan='8'>总资产为:"+account.total+",可用金额:"+account.balance+",已收益:"+account.interest+".</td></tr>"));
+
+            $("#amount").html(amount);
         }
     }, "json");
 });

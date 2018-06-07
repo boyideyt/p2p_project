@@ -14,10 +14,29 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Map;
 
 @WebServlet(name = "Product_AccountServlet", urlPatterns = "/Product_AccountServlet")
 public class Product_AccountServlet extends BaseServlet {
 
+
+    private void showAll(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
+        //检验是否登陆(get customer)
+        Customer customer = (Customer) request.getSession().getAttribute("customer");
+        JsonResult jsonResult = new JsonResult();
+        if (customer == null) {
+            //返回错误信息,
+            jsonResult.setType(0);
+            jsonResult.setErrorMsg("您没登陆,请先登录!");
+        } else {
+            P_AService p_aService = new P_AServiceImpl();
+            Map<String,Object> map = p_aService.showAll(customer.getId());
+            System.out.println(getClass().getSimpleName()+"===="+map);
+            jsonResult.setType(1);
+            jsonResult.setContent(map);
+        }
+        response.getWriter().write(JSONObject.toJSONString(jsonResult));
+    }
 
     private void buy(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
         //获取数据

@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 
 /**
- * 其他Servlet的父类
+ * 其他封装其他Servlet doPost,doGet方法的父类
  */
 @WebServlet(name = "BaseServlet")
 public class BaseServlet extends HttpServlet {
@@ -21,7 +21,8 @@ public class BaseServlet extends HttpServlet {
             String type = request.getParameter("method");
            //调用该方法名的方法
             Method method = this.getClass().getDeclaredMethod(type, HttpServletRequest.class, HttpServletResponse.class);
-            //实现该方法
+            //开启访问权限,实现该方法
+            method.setAccessible(true);
             method.invoke(this,request, response);
         } catch (Exception e) {
             e.printStackTrace();

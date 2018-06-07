@@ -1,10 +1,12 @@
 package com.itheima.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.itheima.dao.AccountDao;
 import com.itheima.dao.CustomerDao;
 import com.itheima.dao.impl.AccountDaoImpl;
 import com.itheima.dao.impl.CustomerDaoImpl;
 import com.itheima.domain.Customer;
+import com.itheima.domain.JsonResult;
 import com.itheima.service.CustomerService;
 import com.itheima.utils.JDBCUtils;
 
@@ -20,6 +22,7 @@ public class CustomerServiceImpl implements CustomerService {
      */
     @Override
     public String reg(Customer customer) throws SQLException {
+        JsonResult jsonResult = new JsonResult();
         try {
             //开启事务
             JDBCUtils.startTransaction();
@@ -40,7 +43,9 @@ public class CustomerServiceImpl implements CustomerService {
             }
             //提交事务
             JDBCUtils.commit();
-            return sb.toString();
+            jsonResult.setType(1);
+            jsonResult.setContent(sb.toString());
+            return JSONObject.toJSONString(jsonResult);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -48,7 +53,9 @@ public class CustomerServiceImpl implements CustomerService {
             JDBCUtils.rollback();
             JDBCUtils.close();
         }
-        return "创建失败";
+        jsonResult.setType(0);
+        jsonResult.setErrorMsg("Service 创建用户失败");
+        return JSONObject.toJSONString(jsonResult);
     }
 
     /**

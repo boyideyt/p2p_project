@@ -11,7 +11,6 @@ import java.sql.SQLException;
 
 public class AccountDaoImpl implements AccountDao {
 
-
     @Override
     public int reg(String email) throws SQLException {
         QueryRunner queryRunner = new QueryRunner();
@@ -24,14 +23,21 @@ public class AccountDaoImpl implements AccountDao {
     public Account findAccount(int id) throws SQLException {
         QueryRunner queryRunner = new QueryRunner(JDBCUtils.getDataSource());
         Account account = queryRunner.query("select * from account where c_id=?", new BeanHandler<Account>(Account.class), id);
-        System.out.println(getClass().getSimpleName()+"----"+account+id);
+        System.out.println(getClass().getSimpleName() + "----" + account + id);
         return account;
     }
 
     @Override
     public int buy(Double newBalance, int id) throws SQLException {
         QueryRunner queryRunner = new QueryRunner();
-        int update = queryRunner.update(JDBCUtils.getConnection(), "update account set balance = ? where id = ?", newBalance,id);
+        int update = queryRunner.update(JDBCUtils.getConnection(), "update account set balance = ? where id = ?", newBalance, id);
+        return update;
+    }
+
+    @Override
+    public int updateInterest(int c_id, Long interest) throws SQLException {
+        QueryRunner queryRunner = new QueryRunner();
+        int update = queryRunner.update(JDBCUtils.getConnection(), "update account set interest = ? where c_id=?", interest, c_id);
         return update;
     }
 }
